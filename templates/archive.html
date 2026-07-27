@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Archive | Project Bookings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
+        :root { --bg-color: #050505; --text-main: #ffffff; --text-muted: #a1a1aa; --accent: #8b5cf6; --card-bg: #121212; --card-border: #27272a; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 2rem 5%; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1.5rem; }
+        .header h1 { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px; color: #3b82f6; font-size: clamp(1.5rem, 4vw, 2rem); }
+        .header-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+        
+        .btn-home { background: transparent; color: var(--text-muted); text-decoration: none; border: 1px solid var(--card-border); padding: 0.5rem 1rem; border-radius: 4px; font-size: 0.9rem; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 8px; white-space: nowrap; }
+        .btn-home:hover { border-color: var(--accent); color: var(--text-main); }
+        .btn-export:hover { border-color: #10b981; color: #10b981; }
+
+        /* Search Bar CSS */
+        .search-container { margin-bottom: 2rem; position: relative; }
+        .search-container i { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+        .search-input { width: 100%; padding: 1rem 1rem 1rem 3rem; background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); border-radius: 6px; font-family: 'Inter', sans-serif; font-size: 1rem; transition: border-color 0.3s ease; }
+        .search-input:focus { outline: none; border-color: #3b82f6; background: rgba(255, 255, 255, 0.05); }
+
+        .archive-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .card { background: rgba(255, 255, 255, 0.02); border: 1px solid var(--card-border); padding: 1.2rem; border-radius: 6px; position: relative; transition: border-color 0.3s, opacity 0.3s ease; word-wrap: break-word; overflow-wrap: break-word; }
+        .card:hover { border-color: #3b82f6; }
+        .card-title { font-weight: 600; font-size: 1.1rem; }
+        .card-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .card-detail { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .card-detail i { color: var(--accent); width: 16px; text-align: center; }
+        
+        .action-buttons { display: flex; gap: 10px; margin-top: 1.5rem; border-top: 1px solid var(--card-border); padding-top: 1rem; }
+        .btn-action { flex: 1; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; }
+        .btn-unarchive { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid #3b82f6; }
+        .btn-unarchive:hover { background: #3b82f6; color: #fff; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+        .btn-delete:hover { background: #ef4444; color: #fff; }
+        
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-muted); }
+        .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+        .toast { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); padding: 1rem 1.5rem; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 12px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 600; font-size: 0.9rem; }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Project <span>Archive</span></h1>
+        <div class="header-actions">
+            <!-- New Export Button -->
+            <a href="/export-archive" class="btn-home btn-export">
+                <i class="fas fa-file-csv"></i> Export to Excel
+            </a>
+            <a href="/admin" class="btn-home"><i class="fas fa-arrow-left"></i> Dashboard</a>
+        </div>
+    </div>
+
+    <!-- New Search Bar -->
+    <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" class="search-input" placeholder="Search archive by client name, email, budget, or keyword...">
+    </div>
+
+    <div class="archive-grid">
+        {% if bookings %}
+            {% for booking in bookings %}
+            <div class="card">
+                <div class="card-title">{{ booking.name }}</div>
+                <div class="card-date">Booked: {{ booking.timestamp[:16] }}</div>
+                <div class="card-detail"><i class="fas fa-envelope"></i> {{ booking.email }}</div>
+                <div class="card-detail"><i class="fas fa-video"></i> {{ booking.project_type }}</div>
+                
+                {% if booking.budget %}
+                <div class="card-detail"><i class="fas fa-wallet"></i> {{ booking.budget }}</div>
+                {% endif %}
+                
+                <div class="action-buttons">
+                    <button class="btn-action btn-unarchive" onclick="unarchiveBooking({{ booking['id'] }}, this)">
+                        <i class="fas fa-undo"></i> Send to Board
+                    </button>
+                    <button class="btn-action btn-delete" onclick="deleteBooking({{ booking['id'] }}, this)">
+                        <i class="fas fa-trash"></i> Move to Trash
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-box-archive" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>No projects in the archive.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // Search Filter Logic
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            document.querySelectorAll('.card').forEach(card => {
+                const cardText = card.innerText.toLowerCase();
+                card.style.display = cardText.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        // Toast Notification System
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        async function unarchiveBooking(id, btnElement) {
+            try {
+                const response = await fetch(`/unarchive-booking/${id}`, { method: 'POST' });
+                if(response.ok) {
+                    const card = btnElement.closest('.card');
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        card.remove();
+                        checkEmptyState();
+                        showToast("Project returned to 'Done' column.", "success");
+                    }, 300);
+                } else {
+                    showToast("Failed to unarchive project.", "error");
+                }
+            } catch(error) {
+                showToast("Network error occurred.", "error");
+            }
+        }
+
+        async function deleteBooking(id, btnElement) {
+            try {
+                const response = await fetch(`/delete-booking/${id}`, { method: 'DELETE' });
+                if(response.ok) {
+                    const card = btnElement.closest('.card');
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        card.remove();
+                        checkEmptyState();
+                        showToast("Project moved to Trash.", "success");
+                    }, 300);
+                } else {
+                    showToast("Failed to delete project.", "error");
+                }
+            } catch(error) {
+                showToast("Network error occurred.", "error");
+            }
+        }
+
+        function checkEmptyState() {
+            const grid = document.querySelector('.archive-grid');
+            const cards = grid.querySelectorAll('.card');
+            if(cards.length === 0) {
+                setTimeout(() => location.reload(), 600);
+            }
+        }
+    </script>
+</body>
+</html>

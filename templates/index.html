@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudious Fernandez | Video Editor & Motion Graphics Artist</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent: #8b5cf6;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --card-bg: #121212;
+            --card-border: #27272a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            background: rgba(5, 5, 5, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        nav .logo span {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav ul li a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            color: var(--text-main);
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 5%;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 30%;
+            width: 40vw;
+            height: 40vw;
+            background: var(--accent);
+            filter: blur(150px);
+            opacity: 0.15;
+            border-radius: 50%;
+            z-index: -1;
+            transform: translate(-50%, -50%);
+        }
+
+        .hero-subtitle {
+            color: var(--accent);
+            font-family: 'Space Grotesk', sans-serif;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .hero-subtitle::before {
+            content: '';
+            display: inline-block;
+            width: 40px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .hero-title {
+            font-size: clamp(3rem, 6vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.05;
+            margin-bottom: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .hero-desc {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            max-width: 650px;
+            margin-bottom: 2.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1rem 2.5rem;
+            background-color: var(--accent);
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px var(--accent-glow);
+        }
+
+        .btn:hover {
+            background-color: #7c3aed;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--card-border);
+            box-shadow: none;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        section {
+            padding: 6rem 5%;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title span {
+            color: var(--accent);
+        }
+
+        .video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .video-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            aspect-ratio: 16/9;
+            cursor: pointer;
+            transition: transform 0.4s ease, border-color 0.4s ease;
+        }
+
+        .video-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+        }
+
+        .video-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(10, 10, 10, 0.75);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        .video-overlay i {
+            font-size: 3rem;
+            color: var(--text-main);
+            margin-bottom: 1rem;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .video-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .video-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .video-card:hover .video-overlay {
+            opacity: 1;
+        }
+
+        .video-card:hover .video-overlay i {
+            transform: scale(1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 80%;
+            max-width: 1000px;
+            aspect-ratio: 16/9;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(139, 92, 246, 0.3);
+        }
+
+        .modal-content iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        /* About & Detailed Experience */
+        .about-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .skill-item-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 1.2rem;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .skill-item-card h4 {
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .skill-item-card p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .timeline-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 2.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            border-left: 4px solid var(--accent);
+        }
+
+        .timeline-date {
+            color: var(--accent);
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .timeline-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-item .sub-heading {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .timeline-item ul {
+            list-style: none;
+            color: var(--text-muted);
+        }
+
+        .timeline-item ul li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .timeline-item ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+
+        .booking-container {
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 4rem;
+            border-radius: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .booking-info h3 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .booking-info p {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+        }
+
+        .contact-detail {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            color: var(--text-muted);
+        }
+
+        .contact-detail i {
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        form {
+            display: grid;
+            gap: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            border-radius: 4px;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        select option {
+            background-color: rgb(28, 32, 34);
+            color: rgba(69, 100, 238);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .submit-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background: #7c3aed;
+        }
+
+        #form-status {
+            display: none;
+            padding: 1rem;
+            border-radius: 4px;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10b981;
+            border: 1px solid #10b981;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            border-top: 1px solid var(--card-border);
+            color: var(--text-muted);
+        }
+
+        @media (max-width: 900px) {
+            .booking-container {
+                grid-template-columns: 1fr;
+                padding: 2rem;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-container {
+                grid-template-columns: 1fr;
+            }
+
+            nav ul {
+                display: none;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav>
+        <div class="logo">Get<span>Cloudy</span></div>
+        <ul>
+            <li><a href="#work">Work</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#experience">Experience</a></li>
+            <li><a href="#book">Book Me</a></li>
+        </ul>
+    </nav>
+
+    <header id="home">
+        <div class="hero-subtitle">Video Editor & Motion Graphics Artist</div>
+        <h1 class="hero-title">Retention-Focused <br>Visual <span style="color: var(--accent);">Storytelling.</span>
+        </h1>
+        <p class="hero-desc">5+ years of experience crafting high-performing videos for creators and brands.
+            Specializing in fast-paced edits, motion graphics, and sound design engineered to maximize watch time.</p>
+
+        <div class="button-group">
+            <a href="#book" class="btn"><i class="fas fa-calendar-check"></i> Book a Project</a>
+            <a href="#work" class="btn btn-outline"><i class="fas fa-play"></i> View Featured Edits</a>
+        </div>
+    </header>
+
+    <section id="work">
+        <h2 class="section-title">Featured <span>Work</span></h2>
+
+        <div class="video-grid">
+            <!-- Video 1 -->
+            <div class="video-card" onclick="openModal('o_xDnYaMpUM')">
+                <!-- Switched back to the static maxresdefault.jpg thumbnail -->
+                <img src="https://img.youtube.com/vi/o_xDnYaMpUM/maxresdefault.jpg"
+                    alt="Best FRIENDS In VALORANT Thumbnail">
+                <div class="video-overlay">
+                    <i class="fas fa-play-circle"></i>
+                    <h3>Best FRIENDS 💖 In VALORANT</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 5px;">High-Retention Gaming Edit</p>
+                </div>
+            </div>
+
+            <!-- Video 2 -->
+            <div class="video-card" onclick="openModal('Ippp4wxPFE0')">
+                <img src="https://img.youtube.com/vi/Ippp4wxPFE0/maxresdefault.jpg"
+                    alt="Valorant Is The Best FPS Game Thumbnail">
+                <div class="video-overlay">
+                    <i class="fas fa-play-circle"></i>
+                    <h3>Valorant Is The Best FPS Game!</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 5px;">Fast-Paced Gameplay & Audio</p>
+                </div>
+            </div>
+
+            <!-- Video 3 -->
+            <div class="video-card" onclick="openModal('f57suJuC4M8')">
+                <img src="https://img.youtube.com/vi/f57suJuC4M8/maxresdefault.jpg" alt="RV There Yet Thumbnail">
+                <div class="video-overlay">
+                    <i class="fas fa-play-circle"></i>
+                    <h3>“RV There Yet? We’ll Never Be.”</h3>
+                    <p style="color: #ccc; font-size: 0.9rem; margin-top: 5px;">Funny Moments / Pacing Design</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expanded About Section -->
+    <section id="about">
+        <h2 class="section-title">About <span>Cloudious</span></h2>
+        <div class="about-container">
+            <div>
+                <h3 style="font-size: 2rem; margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">Cloudious
+                    Fernandez</h3>
+                <p style="color: var(--text-muted); margin-bottom: 1.2rem; font-size: 1.05rem;">
+                    I am a results-driven Video Editor and Motion Graphics Artist with over 5 years of industry
+                    experience creating high-retention content tailored for modern social algorithms (YouTube, Shorts,
+                    Instagram Reels, and long-form formats).
+                </p>
+                <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 1.05rem;">
+                    My editing philosophy centers on viewer psychology: using visual hooks, narrative pacing, seamless
+                    sound design, and custom motion graphics to turn passive viewers into dedicated subscribers.
+                </p>
+                <div
+                    style="background: var(--card-bg); padding: 1.2rem; border-radius: 8px; border: 1px solid var(--card-border);">
+                    <p style="font-size: 0.95rem; color: var(--accent); font-weight: 600;"><i
+                            class="fas fa-graduation-cap"></i> Education & Background</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0.3rem;">Bachelor of Arts —
+                        Rajasthan University (2019 - 2022)</p>
+                    <p style="color: var(--text-muted); font-size: 0.9rem;"><i class="fas fa-language"
+                            style="color: var(--accent);"></i> Fluent in English</p>
+                </div>
+            </div>
+
+            <div>
+                <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.3rem; margin-bottom: 0.5rem;">Core
+                    Technical Expertise</h4>
+                <div class="skills-grid">
+                    <div class="skill-item-card">
+                        <h4>Video Editing</h4>
+                        <p>Expert • Adobe Premiere Pro</p>
+                    </div>
+                    <div class="skill-item-card">
+                        <h4>Visual Effects</h4>
+                        <p>Expert • After Effects / Composite</p>
+                    </div>
+                    <div class="skill-item-card">
+                        <h4>Video Production</h4>
+                        <p>Expert • Pacing & Storytelling</p>
+                    </div>
+                    <div class="skill-item-card">
+                        <h4>Motion Graphics</h4>
+                        <p>Experienced • Dynamic Lower Thirds & Text</p>
+                    </div>
+                    <div class="skill-item-card">
+                        <h4>Audio Editing</h4>
+                        <p>Experienced • Sound Design & Mix</p>
+                    </div>
+                    <div class="skill-item-card">
+                        <h4>Post Production</h4>
+                        <p>Experienced • Multi-platform Delivery</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Expanded Work Experience Section -->
+    <section id="experience">
+        <h2 class="section-title">Work <span>Experience</span></h2>
+        <div style="max-width: 900px;">
+            <div class="timeline-item">
+                <div class="timeline-date">March 2020 – Present (5+ Years)</div>
+                <h3 style="font-family: 'Space Grotesk', sans-serif;">Video Editor & Motion Graphics Artist</h3>
+                <div class="sub-heading">Freelance — Remote Client Services</div>
+
+                <ul>
+                    <li><strong>High-Retention Creator Content:</strong> Edited competitive gaming videos, challenges,
+                        and commentary content using fast-paced cuts, sound effects, and strong visual storytelling to
+                        maximize watch time.</li>
+                    <li><strong>Short-Form Optimization:</strong> Designed platform-optimized Reels, Shorts, and TikToks
+                        featuring dynamic captions, motion graphics, and punchy hooks engineered for immediate viewer
+                        retention.</li>
+                    <li><strong>End-to-End Post Production:</strong> Handled raw footage transformation from initial
+                        assembly to color correction, visual effects compositing, and balanced sound design.</li>
+                    <li><strong>Creator Brand Alignment:</strong> Collaborated directly with YouTube creators to build
+                        distinct channel styles, custom intro/outro motion graphics, and thumbnail-friendly visual
+                        moments.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section id="book">
+        <div class="booking-container">
+            <div class="booking-info">
+                <h2 class="section-title" style="margin-bottom: 1rem;">Start a <span>Project</span></h2>
+                <p>Ready to level up your channel retention and post-production quality? Fill out the details below to
+                    book a edit or monthly retainer.</p>
+
+                <div style="margin-top: 3rem;">
+                    <div class="contact-detail">
+                        <i class="fas fa-envelope"></i>
+                        <span>getcloudy11@gmail.com</span>
+                    </div>
+                    <div class="contact-detail">
+                        <i class="fas fa-phone"></i>
+                        <span>06378688024</span>
+                    </div>
+                    <div class="contact-detail">
+                        <i class="fas fa-location-dot"></i>
+                        <span>Jaipur, India</span>
+                    </div>
+                </div>
+            </div>
+
+            <form id="contactForm">
+                <div class="form-row">
+                    <input type="text" id="name" name="name" placeholder="Your Name / Channel Name" required>
+                    <input type="email" id="email" name="email" placeholder="Your Email Address" required>
+                </div>
+
+                <select name="project_type" id="project_type" required>
+                    <option value="" disabled selected>Select Project Type...</option>
+                    <option value="Long Form YouTube Edit">Long Form YouTube Edit</option>
+                    <option value="Shorts / Reels Batch">Shorts / Reels Batch</option>
+                    <option value="Motion Graphics / VFX">Motion Graphics / VFX Only</option>
+                    <option value="Monthly Retainer">Monthly Retainer</option>
+                </select>
+
+                <input type="text" id="budget" name="budget" placeholder="Estimated Budget (USD)" inputmode="numeric"
+                    oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+
+                <textarea name="message" id="message"
+                    placeholder="Tell me about your project, raw footage length, and specific vibe you are looking for..."
+                    required></textarea>
+
+                <button type="submit" class="submit-btn">Send Project Request <i class="fas fa-arrow-right"
+                        style="margin-left: 8px;"></i></button>
+                <div id="form-status"></div>
+            </form>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Cloudious Fernandez. Built for High Retention.</p>
+    </footer>
+
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <iframe id="youtubeIframe" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+    // --- Scroll Animations ---
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = 1;
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('section').forEach((section) => {
+        section.style.opacity = 0;
+        section.style.transform = 'translateY(20px)';
+        section.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
+        observer.observe(section);
+    });
+
+    // --- Video Modal Logic ---
+    const modal = document.getElementById('videoModal');
+    const iframe = document.getElementById('youtubeIframe');
+
+    function openModal(videoId) {
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        modal.classList.add('active');
+    }
+
+    function closeModal() {
+        modal.classList.remove('active');
+        iframe.src = '';
+    }
+
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeModal();
+    });
+
+    // --- Form Submission Logic ---
+    const form = document.getElementById("contactForm");
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+        
+        const btn = document.querySelector('.submit-btn');
+        const status = document.getElementById('form-status');
+        const budgetValue = document.getElementById('budget').value;
+
+        btn.innerHTML = 'Sending...';
+        status.style.display = "none"; // Hide any previous messages
+
+        try {
+            // Using 'await' completely fixes the scope and timing issues
+            const response = await fetch('/submit-booking', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    project_type: document.getElementById('project_type').value,
+                    budget: budgetValue,
+                    message: document.getElementById('message').value
+                })
+            });
+
+            // Now 'response' exists and we can safely check it!
+            if (response.ok) {
+                status.style.display = "block";
+                status.style.color = "#10b981";
+                status.style.borderColor = "#10b981";
+                status.style.backgroundColor = "rgba(16, 185, 129, 0.1)";
+                status.innerText = "Thanks! Your booking request was sent.";
+                form.reset();
+            } else {
+                throw new Error('Server returned an error');
+            }
+            
+        } catch (error) {
+            console.error("Submission Error:", error); // Logs the exact issue to the console for debugging
+            status.style.display = "block";
+            status.style.color = "#ef4444";
+            status.style.borderColor = "#ef4444";
+            status.style.backgroundColor = "rgba(239, 68, 68, 0.1)";
+            status.innerText = "Oops! Could not connect to the server.";
+        } finally {
+            // Resets the button text whether it succeeds or fails
+            btn.innerHTML = 'SEND PROJECT REQUEST <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>';
+        }
+    });
+</script>
+</body>
+
+</html>

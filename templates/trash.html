@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash | Project Bookings</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@700&display=swap');
+
+        :root {
+            --bg-color: #050505;
+            --text-main: #ffffff;
+            --text-muted: #a1a1aa;
+            --accent: #8b5cf6;
+            --card-bg: #121212;
+            --card-border: #27272a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-color); color: var(--text-main); line-height: 1.6; padding: 2rem 5%; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; border-bottom: 1px solid var(--card-border); padding-bottom: 1.5rem; }
+        .header h1 { font-family: 'Space Grotesk', sans-serif; text-transform: uppercase; letter-spacing: 1px; }
+        .btn-home { background: transparent; color: var(--text-muted); text-decoration: none; border: 1px solid var(--card-border); padding: 0.5rem 1rem; border-radius: 4px; transition: all 0.3s ease; }
+        .btn-home:hover { border-color: var(--accent); color: var(--text-main); }
+
+        .trash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .card { background: rgba(255, 255, 255, 0.02); border: 1px dashed var(--card-border); padding: 1.2rem; border-radius: 6px; position: relative; opacity: 0.8; transition: opacity 0.3s ease; }
+        .card:hover { opacity: 1; border-color: #ef4444; }
+        .card-title { font-weight: 600; font-size: 1.1rem; }
+        .card-date { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .card-detail { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 0.4rem; }
+        .action-buttons { display: flex; gap: 10px; margin-top: 1.5rem; border-top: 1px solid var(--card-border); padding-top: 1rem; }
+        .btn-action { flex: 1; padding: 0.5rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; }
+        
+        .btn-recover { background: rgba(16, 185, 129, 0.1); color: #10b981; border: 1px solid #10b981; }
+        .btn-recover:hover { background: #10b981; color: #000; }
+        .btn-delete { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid #ef4444; }
+        .btn-delete:hover { background: #ef4444; color: #000; }
+        .empty-state { grid-column: 1 / -1; text-align: center; padding: 4rem; color: var(--text-muted); }
+
+        /* Toast & Modal CSS */
+        .toast-container { position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 10px; z-index: 9999; }
+        .toast { background: var(--card-bg); border: 1px solid var(--card-border); color: var(--text-main); padding: 1rem 1.5rem; border-radius: 6px; box-shadow: 0 8px 24px rgba(0,0,0,0.6); display: flex; align-items: center; gap: 12px; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); font-weight: 600; font-size: 0.9rem; }
+        .toast.show { transform: translateX(0); }
+        .toast.success { border-left: 4px solid #10b981; }
+        .toast.error { border-left: 4px solid #ef4444; }
+
+        .confirm-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); display: flex; justify-content: center; align-items: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+        .confirm-overlay.show { opacity: 1; pointer-events: all; }
+        .confirm-box { background: var(--card-bg); border: 1px solid var(--card-border); padding: 2rem; border-radius: 8px; width: 90%; max-width: 400px; text-align: center; transform: translateY(20px); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .confirm-overlay.show .confirm-box { transform: translateY(0); }
+        .confirm-box h3 { margin-bottom: 0.5rem; font-family: 'Space Grotesk', sans-serif; font-size: 1.4rem; color: #ef4444; }
+        .confirm-box p { color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem; }
+        .confirm-actions { display: flex; gap: 10px; justify-content: center; }
+        .confirm-actions button { flex: 1; padding: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+        .btn-cancel { background: transparent; border: 1px solid var(--card-border); color: var(--text-main); }
+        .btn-cancel:hover { background: rgba(255,255,255,0.05); }
+        .btn-confirm-hard { background: #ef4444; color: white; }
+        .btn-confirm-hard:hover { background: #dc2626; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Recycle <span>Bin</span></h1>
+        <a href="/admin" class="btn-home"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
+
+    <div class="trash-grid">
+        {% if bookings %}
+            {% for booking in bookings %}
+            <div class="card">
+                <div class="card-title">{{ booking.name }}</div>
+                <div class="card-date">Deleted on: {{ booking.timestamp[:16] }}</div>
+                <div class="card-detail"><i class="fas fa-envelope"></i> {{ booking.email }}</div>
+                <div class="card-detail"><i class="fas fa-video"></i> {{ booking.project_type }}</div>
+                
+                <div class="action-buttons">
+                    <button class="btn-action btn-recover" onclick="recoverBooking({{ booking['id'] }}, this)">
+                        <i class="fas fa-undo"></i> Recover
+                    </button>
+                    <button class="btn-action btn-delete" onclick="hardDeleteBooking({{ booking['id'] }}, this)">
+                        <i class="fas fa-times"></i> Delete Forever
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <i class="fas fa-trash" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                <p>Trash is empty.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div id="toastContainer" class="toast-container"></div>
+
+    <div id="customConfirm" class="confirm-overlay">
+        <div class="confirm-box">
+            <h3 id="confirmTitle"><i class="fas fa-exclamation-triangle"></i> Permanent Deletion</h3>
+            <p id="confirmMessage">This will completely erase the project from the database. This action cannot be undone.</p>
+            <div class="confirm-actions">
+                <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+                <button class="btn-confirm-hard" id="confirmBtn">Delete Forever</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            const icon = type === 'success' ? '<i class="fas fa-check-circle" style="color:#10b981;"></i>' : '<i class="fas fa-exclamation-circle" style="color:#ef4444;"></i>';
+            toast.innerHTML = `${icon} <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.add('show'), 10);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 3000);
+        }
+
+        let currentConfirmCallback = null;
+
+        function showConfirm(callback) {
+            document.getElementById('customConfirm').classList.add('show');
+            currentConfirmCallback = callback;
+        }
+
+        function closeConfirm() {
+            document.getElementById('customConfirm').classList.remove('show');
+            currentConfirmCallback = null;
+        }
+
+        document.getElementById('confirmBtn').addEventListener('click', () => {
+            if(currentConfirmCallback) currentConfirmCallback();
+            closeConfirm();
+        });
+
+        async function recoverBooking(id, btnElement) {
+            try {
+                const response = await fetch(`/recover-booking/${id}`, { method: 'POST' });
+                if(response.ok) {
+                    const card = btnElement.closest('.card');
+                    card.style.opacity = '0';
+                    card.style.transform = 'scale(0.9)';
+                    setTimeout(() => {
+                        card.remove();
+                        checkEmptyState();
+                        showToast("Project recovered to Pending list.", "success");
+                    }, 300);
+                } else {
+                    showToast("Failed to recover project.", "error");
+                }
+            } catch(error) {
+                showToast("Network error occurred.", "error");
+            }
+        }
+
+        function hardDeleteBooking(id, btnElement) {
+            showConfirm(async () => {
+                try {
+                    const response = await fetch(`/hard-delete-booking/${id}`, { method: 'DELETE' });
+                    if(response.ok) {
+                        const card = btnElement.closest('.card');
+                        card.style.opacity = '0';
+                        card.style.transform = 'scale(0.9)';
+                        setTimeout(() => {
+                            card.remove();
+                            checkEmptyState();
+                        }, 300);
+                    } else {
+                        showToast("Failed to delete project.", "error");
+                    }
+                } catch(error) {
+                    showToast("Network error occurred.", "error");
+                }
+            });
+        }
+
+        function checkEmptyState() {
+            const grid = document.querySelector('.trash-grid');
+            const cards = grid.querySelectorAll('.card');
+            if(cards.length === 0) {
+                setTimeout(() => location.reload(), 600); // Reloads smoothly to show empty state
+            }
+        }
+    </script>
+</body>
+</html>
