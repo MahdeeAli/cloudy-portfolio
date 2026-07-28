@@ -14,8 +14,7 @@ services:
       - portfolio
 
   portfolio:
-    build:
-      context: .
+    image: mahdee07/cloudy-portfolio:latest
     container_name: cloudy-portfolifo
     environment:
       - DB_HOST=db
