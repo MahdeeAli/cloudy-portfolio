@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify, render_template, session, redirect, url_for
 import smtplib
 from email.mime.text import MIMEText
@@ -25,35 +26,19 @@ SENDER_EMAIL = "mahdeeali1111@gmail.com"
 SENDER_PASSWORD = "udvg wjsz eabh zhvp" 
 OWNER_EMAIL = "mahdeeali1111@gmail.com"
 
-# --- MySQL Database Configuration ---
-DB_CONFIG = {
-    'host': 'localhost',      # Change if your MySQL is hosted elsewhere
-    'user': 'root',           # Your MySQL username
-    'password': 'root',           # Your MySQL password
-    'database': 'portfolio_db'
-}
-
 def get_db_connection():
-    return mysql.connector.connect(**DB_CONFIG)
+    return mysql.connector.connect(
+        host=os.environ.get('DB_HOST', 'db'),
+        user=os.environ.get('DB_USER', 'root'),
+        password=os.environ.get('DB_PASSWORD', 'root@123'),
+        database=os.environ.get('DB_NAME', 'portfolio_db')
+    )
 
+# 2. DEFINE THIS SECOND: Function to initialize tables
 def init_db():
     try:
-        # 1. Connect without targeting a specific database first
-        conn = mysql.connector.connect(
-            host=DB_CONFIG['host'],
-            user=DB_CONFIG['user'],
-            password=DB_CONFIG['password']
-        )
+        conn = get_db_connection() # Now Python knows what get_db_connection is!
         c = conn.cursor()
-        # Create the database if it doesn't exist
-        c.execute(f"CREATE DATABASE IF NOT EXISTS {DB_CONFIG['database']}")
-        conn.close()
-
-        # 2. Reconnect directly to the new database
-        conn = get_db_connection()
-        c = conn.cursor()
-        
-        # Create the table using MySQL syntax
         c.execute('''
             CREATE TABLE IF NOT EXISTS bookings (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -68,11 +53,11 @@ def init_db():
         ''')
         conn.commit()
         conn.close()
-        print("MySQL Database Initialized Successfully!")
-    except Error as e:
-        print(f"Error connecting to MySQL: {e}")
+        print("Database initialized successfully!")
+    except Exception as e:
+        print(f"Error initializing database: {e}")
 
-# Initialize the database on startup
+# 3. CALL IT AFTER IT IS DEFINED
 init_db()
 
 # --- Public Routes ---
@@ -387,4 +372,4 @@ def export_archive():
     )
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(host='0.0.0.0', debug=True, port=5000)

@@ -1,0 +1,14 @@
+# Python environment
+/opt/venv/
+venv/
+__pycache__/
+*.pyc
+
+# Docker database volume
+mysql-data/
+
+# Environment variables (if you ever move passwords out of docker-compose)
+.env
+
+# OS generated files
+.DS_Store
