@@ -1,0 +1,12 @@
+# Ignore database volume files
+mysql-data/
+
+# Ignore Python virtual environments and caches
+/opt/venv/
+venv/
+__pycache__/
+*.pyc
+
+# Ignore Git files
+.git/
+.gitignore
