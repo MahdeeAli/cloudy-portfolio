@@ -16,7 +16,7 @@ services:
   portfolio:
     build:
       context: .
-    container_name: cloudy-portfolifo
+    container_name: cloudy-portfolio
     environment:
       - DB_HOST=db
       - DB_USER=root
