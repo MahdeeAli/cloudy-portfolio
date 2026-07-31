@@ -93,11 +93,14 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+    volumes:
+      - grafana-storage:/var/lib/grafana
     networks:
       - cloudy-port
 
 volumes:
   mysql-data:
+  grafana-storage:
 
 networks:
   cloudy-port:
