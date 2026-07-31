@@ -63,6 +63,8 @@ services:
     restart: unless-stopped
     ports:
       - "9100:9100"
+    networks:
+      - cloudy-port
 
   prometheus:
     image: prom/prometheus:latest
@@ -72,6 +74,8 @@ services:
       - "9090:9090"
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - cloudy-port
 
   grafana:
     image: grafana/grafana:latest
@@ -81,6 +85,8 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+    networks:
+      - cloudy-port
 
 volumes:
   mysql-data:
